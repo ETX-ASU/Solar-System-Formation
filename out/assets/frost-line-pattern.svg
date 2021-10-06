@@ -1,0 +1,14 @@
+<svg width="120" height="120">
+  <defs>
+    <pattern
+      id="dots-pattern"
+      width="30"
+      height="30"
+      patternUnits="userSpaceOnUse"
+    >
+      <rect width="30" height="30" fill="transparent"></rect>
+      <circle cx="15" cy="15" r="2.5" fill="#0DA2D9"></circle>
+    </pattern>
+  </defs>
+  <rect width="120" height="120" fill="url(#dots-pattern)"></rect>
+</svg>

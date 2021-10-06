@@ -1,0 +1,15 @@
+image: node:14.16.1
+
+pages:
+  stage: deploy
+  script:
+    - yarn
+    - yarn build
+    - rm -rf public
+    - mv out public
+  artifacts:
+    paths:
+      - public
+  only:
+    - develop
+  when: manual
