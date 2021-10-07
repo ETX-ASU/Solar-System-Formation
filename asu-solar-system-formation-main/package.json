@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "zip": "rm -rf out pages/demo*.tsx && NEXT_PUBLIC_BASE_PATH='' yarn build && zip -r asu-solar-system-formation.zip out && git checkout -- 'pages/demo*.tsx'"
+    "zip": "rm -rf out pages/demo*.tsx && NEXT_PUBLIC_BASE_PATH='/solar-system-formation' yarn build && zip -r asu-solar-system-formation.zip out && git checkout -- 'pages/demo*.tsx'"
   },
   "dependencies": {
     "@material-ui/core": "^5.0.0-beta.4",
