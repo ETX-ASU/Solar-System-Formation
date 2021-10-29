@@ -5,6 +5,11 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
   [MODES.PROBE]: [
     {
       id: 'probe',
+      meta: {
+        isScalable: true,
+        innerObjectScaleDivider: 1.4,
+        outerObjectScaleDivider: 0.8,
+      },
     },
   ],
   [MODES.STATE_OF_AGGREGATION]: [
@@ -12,18 +17,27 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
       id: 'gas',
       meta: {
         isAloneOnOrbit: true,
+        isScalable: true,
+        innerObjectScaleDivider: 1.4,
+        outerObjectScaleDivider: 0.8,
       },
     },
     {
       id: 'compound',
       meta: {
         isAloneOnOrbit: true,
+        isScalable: true,
+        innerObjectScaleDivider: 1.4,
+        outerObjectScaleDivider: 0.8,
       },
     },
     {
       id: 'rock',
       meta: {
         isAloneOnOrbit: true,
+        isScalable: true,
+        innerObjectScaleDivider: 1.4,
+        outerObjectScaleDivider: 0.8,
       },
     },
   ],
@@ -35,6 +49,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
         distanceFromSun: 0.39,
         angle: 0,
         isScalable: true,
+        withOrbit: true,
       },
     },
     {
@@ -44,6 +59,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
         distanceFromSun: 0.72,
         angle: 90,
         isScalable: true,
+        withOrbit: true,
       },
     },
     {
@@ -53,6 +69,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
         distanceFromSun: 1,
         angle: 180,
         isScalable: true,
+        withOrbit: true,
       },
     },
     {
@@ -62,6 +79,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
         distanceFromSun: 1.52,
         angle: 270,
         isScalable: true,
+        withOrbit: true,
       },
     },
     {
@@ -71,6 +89,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
         distanceFromSun: 5.2,
         angle: 45,
         isScalable: true,
+        withOrbit: true,
       },
     },
     {
@@ -80,6 +99,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
         distanceFromSun: 9.58,
         angle: 135,
         isScalable: true,
+        withOrbit: true,
       },
     },
     {
@@ -89,6 +109,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
         distanceFromSun: 19.2,
         angle: 225,
         isScalable: true,
+        withOrbit: true,
       },
     },
     {
@@ -98,6 +119,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
         distanceFromSun: 30.1,
         angle: 315,
         isScalable: true,
+        withOrbit: true,
       },
     },
   ],
@@ -112,6 +134,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
       meta: {
         distanceFromSun: 0.22,
         isScalable: true,
+        withOrbit: true,
         distanceOuterPlanets: 1,
         innerObjectScaleDivider: 2,
       },
@@ -121,6 +144,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
       meta: {
         distanceFromSun: 0.32,
         isScalable: true,
+        withOrbit: true,
         distanceOuterPlanets: 1,
         innerObjectScaleDivider: 2,
       },
@@ -130,6 +154,7 @@ export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
       meta: {
         distanceFromSun: 0.76,
         isScalable: true,
+        withOrbit: true,
         distanceOuterPlanets: 1,
         innerObjectScaleDivider: 2,
       },

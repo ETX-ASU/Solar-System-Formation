@@ -56,11 +56,14 @@ export const SolarSystemAreaCanvas = observer(() => {
       });
 
       const distanceInPixels = measureDistance(point, sunCoordinates);
+      const sunRadius = getSunDiameter(settingsStore.radius) / 2;
 
-      if (
+      const avoidPlaceObject =
         distance > settingsStore.maxRadius + 0.05 ||
-        distance < MIN_OBJECT_RADIUS
-      ) {
+        distance < MIN_OBJECT_RADIUS ||
+        distanceInPixels < sunRadius;
+
+      if (avoidPlaceObject) {
         return;
       }
 
@@ -114,7 +117,7 @@ export const SolarSystemAreaCanvas = observer(() => {
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [testObjectsStore, settingsStore, clickableCanvasRef],
+    [testObjectsStore, settingsStore, settingsStore.radius, clickableCanvasRef],
   );
 
   const { drawObject, drawObjectLabel, drawObjectOrbit } = useMemo(
@@ -201,11 +204,11 @@ export const SolarSystemAreaCanvas = observer(() => {
     };
 
     const draw = (position: { x: number; y: number } | undefined) => {
-      if (!position) {
+      const canvas = clickableCanvasRef.current;
+      if (!position || !canvas) {
         return;
       }
 
-      const canvas = clickableCanvasRef.current!;
       const ctx = canvas.getContext('2d')!;
 
       resetCanvas(ctx);
@@ -246,8 +249,11 @@ export const SolarSystemAreaCanvas = observer(() => {
 
       const filteredObjects =
         testObjectsStore.placedObjects.filter(shouldDrawingObject);
+      const objectsWithOrbit = filteredObjects.filter(
+        (object) => object.meta?.withOrbit,
+      );
 
-      filteredObjects.forEach((object: ITestObject) => {
+      objectsWithOrbit.forEach((object: ITestObject) => {
         drawObjectOrbit(object);
       });
       filteredObjects.forEach((object: ITestObject) => {
@@ -286,16 +292,15 @@ export const SolarSystemAreaCanvas = observer(() => {
     );
 
     const shouldIgnoreAdditionalDrawing = (): boolean =>
-      testObjectsStore.placedObjects.length > 0 ||
-      (testObjectsStore.placedObjects.length === 0 &&
-        !(
-          settingsStore.isVisibleModelElements(
-            MODEL_ELEMENTS_VISIBLE.HYDROGEN_COMPOUNDS_CONDENSE,
-          ) ||
-          settingsStore.isVisibleModelElements(
-            MODEL_ELEMENTS_VISIBLE.ROCKS_AND_METALS_CONDENSE,
-          )
-        ));
+      testObjectsStore.placedObjects.length === 0 &&
+      !(
+        settingsStore.isVisibleModelElements(
+          MODEL_ELEMENTS_VISIBLE.HYDROGEN_COMPOUNDS_CONDENSE,
+        ) ||
+        settingsStore.isVisibleModelElements(
+          MODEL_ELEMENTS_VISIBLE.ROCKS_AND_METALS_CONDENSE,
+        )
+      );
 
     const handleDrawWithoutObjects = () => {
       if (shouldIgnoreAdditionalDrawing()) {

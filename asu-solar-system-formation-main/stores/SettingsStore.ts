@@ -33,6 +33,7 @@ export interface ISettingsStore {
   };
   radiusVisible: boolean;
   radiusEnabled: boolean;
+  pullingRadius: boolean;
 
   parametersVisible: boolean;
   parametersDisplayed: OBJECT_PARAMETERS[];
@@ -68,6 +69,7 @@ export class SettingsStore implements ISettingsStore {
   readonly maxRadius: number = 32;
   radiusVisible: boolean = capiSchema['Sim.SS.Radius.Visible'].initialValue;
   radiusEnabled: boolean = capiSchema['Sim.SS.Radius.Enabled'].initialValue;
+  pullingRadius: boolean = false;
 
   parametersVisible: boolean = true;
   parametersDisplayed: OBJECT_PARAMETERS[] =
@@ -113,6 +115,7 @@ export class SettingsStore implements ISettingsStore {
       bankEnabled: observable,
       radiusVisible: observable,
       radiusEnabled: observable,
+      pullingRadius: observable,
       parametersVisible: observable,
       parametersDisplayed: observable,
       modelElements: observable,

@@ -9,6 +9,8 @@ import {
 } from 'domainTypes';
 import { IReactionDisposer, reaction, runInAction, set } from 'mobx';
 
+import isNumber from 'lodash/isNumber';
+
 import { OBJECTS_BY_MODE } from 'utils/objectsMap';
 import { getSunDiameter } from 'utils/canvas';
 
@@ -355,8 +357,13 @@ export class RootStore implements IRootStore {
       capiSet('Sim.Object.Selected.Angle', 0),
     );
     reaction(
-      () => this.settingsStore.radius,
-      capiSet('Sim.SS.Radius.Value', 32),
+      () =>
+        this.settingsStore.pullingRadius ? false : this.settingsStore.radius,
+      (newRadius: boolean | number) => {
+        if (isNumber(newRadius)) {
+          capi.set('Sim.SS.Radius.Value', newRadius || 32);
+        }
+      },
     );
     reaction(
       () => this.settingsStore.radiusVisible,

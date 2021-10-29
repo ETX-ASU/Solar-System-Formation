@@ -167,23 +167,21 @@ export const canvasObjectTools = ({
   };
 
   const drawObjectOrbit = (object: ITestObject) => {
-    if (object.meta?.isScalable) {
-      if (shouldIgnoreRendering(object)) {
-        return;
-      }
-
-      const _drawObjectOrbit = partial(drawOutlineCircle, {
-        canvas,
-        ctx,
-        distanceInPixels: object.distanceInPixels!,
-        line: {
-          color: objectOrbitColor,
-          width: 1,
-        },
-      });
-
-      _drawObjectOrbit();
+    if (shouldIgnoreRendering(object)) {
+      return;
     }
+
+    const _drawObjectOrbit = partial(drawOutlineCircle, {
+      canvas,
+      ctx,
+      distanceInPixels: object.distanceInPixels!,
+      line: {
+        color: objectOrbitColor,
+        width: 1,
+      },
+    });
+
+    _drawObjectOrbit();
   };
 
   const drawObjectLabel = (object: ITestObject) => {
@@ -349,6 +347,14 @@ const getObjectBoundaries = (
   const distanceOuterPlanets = object.meta?.distanceOuterPlanets ?? 4;
   const outerObjectScaleDivider = object.meta?.outerObjectScaleDivider ?? 1.25;
   const innerObjectScaleDivider = object.meta?.innerObjectScaleDivider ?? 3;
+  const imageWidthRatio =
+    object.image.height > object.image.width
+      ? object.image.width / object.image.height
+      : 1;
+  const imageHeightRatio =
+    object.image.width > object.image.height
+      ? object.image.height / object.image.width
+      : 1;
   const sizeDivider =
     object.distance > distanceOuterPlanets
       ? outerObjectScaleDivider
@@ -356,11 +362,17 @@ const getObjectBoundaries = (
   const imageWidth =
     sunDiameter == null
       ? object.image.width
-      : Math.min(sunDiameter / sizeDivider, object.image.width);
+      : Math.min(
+          (sunDiameter / sizeDivider) * imageWidthRatio,
+          object.image.width,
+        );
   const imageHeight =
     sunDiameter == null
       ? object.image.height
-      : Math.min(sunDiameter / sizeDivider, object.image.height);
+      : Math.min(
+          (sunDiameter / sizeDivider) * imageHeightRatio,
+          object.image.height,
+        );
   const middleHorizontalCoordinates = object.coordinates.x - imageWidth / 2;
   const middleVerticalCoordinates = object.coordinates.y - imageHeight / 2;
 

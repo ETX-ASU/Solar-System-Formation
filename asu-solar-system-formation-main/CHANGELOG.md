@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://gitlab.com/gogoapps/asu-solar-system-formation/compare/v0.1.5...v0.1.6) (2021-10-29)
+
+
+### Features
+
+* Avoid place object on sun ([a0cf746](https://gitlab.com/gogoapps/asu-solar-system-formation/commit/a0cf746126f2802ca5b861315ca3e3289b9740e2))
+* Update zooming ([5afd603](https://gitlab.com/gogoapps/asu-solar-system-formation/commit/5afd6038543c9307b68c60a8ebf22660b68c3ec2))
+* Updated BASE_PATH for preparing zip file ([53fb00e](https://gitlab.com/gogoapps/asu-solar-system-formation/commit/53fb00e23c739f90b4fffa138532aeae465469e7))
+
+
+### Bug Fixes
+
+* Fixed bubbling effect for radius change ([90c9901](https://gitlab.com/gogoapps/asu-solar-system-formation/commit/90c9901e0a5fde82c941d794ef2bedcabcbb2cfd))
+* Fixed mouse up event on radius slider ([2e96c9f](https://gitlab.com/gogoapps/asu-solar-system-formation/commit/2e96c9f91e3cd3c15288f3b7a9a69d7959a46491))
+
 ### [0.1.5](https://gitlab.com/gogoapps/asu-solar-system-formation/compare/v0.1.4...v0.1.5) (2021-09-29)
 
 

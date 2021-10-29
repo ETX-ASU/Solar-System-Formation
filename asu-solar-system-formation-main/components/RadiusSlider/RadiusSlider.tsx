@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 import { observer } from 'mobx-react-lite';
 
 import { useStores } from 'providers/StoreProvider/useStores';
+import { runInAction } from 'mobx';
 
 export const RadiusSlider = observer(() => {
   const { settingsStore } = useStores();
@@ -40,6 +41,22 @@ const StyledSliderObserver = observer(() => {
     [settingsStore],
   );
 
+  const startDragging = React.useCallback(
+    () =>
+      runInAction(() => {
+        settingsStore.pullingRadius = true;
+      }),
+    [settingsStore],
+  );
+
+  const stopDragging = React.useCallback(
+    () =>
+      runInAction(() => {
+        settingsStore.pullingRadius = false;
+      }),
+    [settingsStore],
+  );
+
   return (
     <StyledSlider
       data-testid="radius-slider"
@@ -50,6 +67,8 @@ const StyledSliderObserver = observer(() => {
       min={settingsStore.minRadius}
       max={settingsStore.maxRadius}
       valueLabelFormat={(value: number) => `${value} AU`}
+      onMouseDown={startDragging}
+      onChangeCommitted={stopDragging}
     />
   );
 });

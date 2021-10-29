@@ -40,6 +40,10 @@ export interface ITestObjectSource {
      */
     isScalable?: boolean;
     /**
+     * Should draw orbit for object
+     */
+    withOrbit?: boolean;
+    /**
      * The distance where the planet becomes outer planet and should be scaled differently
      *
      * default: 4 AU
