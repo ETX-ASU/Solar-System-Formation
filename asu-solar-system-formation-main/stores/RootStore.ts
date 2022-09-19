@@ -10,6 +10,9 @@ import {
 import { IReactionDisposer, reaction, runInAction, set } from 'mobx';
 
 import isNumber from 'lodash/isNumber';
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
+import toNumber from 'lodash/toNumber';
 
 import { OBJECTS_BY_MODE } from 'utils/objectsMap';
 import { getSunDiameter } from 'utils/canvas';
@@ -52,7 +55,7 @@ export class RootStore implements IRootStore {
 
     reaction(
       () => this.settingsStore.mode,
-      (mode: MODES | null, prevMode: MODES | null) => {
+      (mode: MODES | null | undefined, prevMode: MODES | null | undefined) => {
         replacePointOnGraphDisposer?.();
         if (prevMode === MODES.SOLAR_SYSTEM && mode === MODES.FROST_LINE) {
           this.testObjectsStore.objects.forEach((object: ITestObject) =>
@@ -506,6 +509,13 @@ const setPropertyInStore =
     runInAction(() => {
       if (definedSetter) {
         return definedSetter(value);
+      }
+
+      if (isArray(value) && value.some(isString)) {
+        const arrayOfNumbers = value.map(toNumber);
+        set(store, key, arrayOfNumbers);
+
+        return;
       }
 
       set(store, key, value);
