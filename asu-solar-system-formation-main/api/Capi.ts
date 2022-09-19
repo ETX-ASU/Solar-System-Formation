@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import { ICapiInternalModel, TCapiSchema, ICAPI, ISimCapi } from 'domainTypes';
 
+import isEqual from 'lodash/isEqual';
+
 type TTick = null | number | NodeJS.Timer;
 
 export class CAPI<M> implements ICAPI<M> {
@@ -124,6 +126,18 @@ export class CAPI<M> implements ICAPI<M> {
       throw new Error(
         'CAPI is not initialized. You need to call .init, before using .sendToApi',
       );
+    }
+
+    if (isEqual(this.get(variableName), value)) {
+      if (this.debug)
+        console.log(
+          `%c Canceled sending to API: %c${variableName}%c/%c${value}`,
+          'color: #03a9f4',
+          'color: #f44336',
+          'color: #9e9e9e',
+          'color: #fff',
+        );
+      return;
     }
 
     if (this.debug)
