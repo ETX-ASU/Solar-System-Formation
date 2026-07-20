@@ -13,16 +13,26 @@ export const RadiusSlider = observer(() => {
   const decrease = () => settingsStore.setRadius(settingsStore.radius - 1);
 
   return settingsStore.radiusVisible ? (
-    <RadiusSliderWrapper>
-      <Title>Zoom</Title>
+    <RadiusSliderWrapper role="group" aria-labelledby="zoom-title">
+      <Title id="zoom-title">Zoom</Title>
       <SliderWrapper>
-        <Label disabled={!settingsStore.radiusEnabled} onClick={decrease}>
+        <Label
+          type="button"
+          disabled={!settingsStore.radiusEnabled}
+          onClick={decrease}
+          aria-label="Zoom in"
+        >
           +
         </Label>
         <StyledSliderWrapper>
           <StyledSliderObserver />
         </StyledSliderWrapper>
-        <Label disabled={!settingsStore.radiusEnabled} onClick={increase}>
+        <Label
+          type="button"
+          disabled={!settingsStore.radiusEnabled}
+          onClick={increase}
+          aria-label="Zoom out"
+        >
           -
         </Label>
       </SliderWrapper>
@@ -61,13 +71,15 @@ const StyledSliderObserver = observer(() => {
     <StyledSlider
       data-testid="radius-slider"
       value={settingsStore.radius}
+      aria-label="Solar system radius in astronomical units"
+      getAriaValueText={(value: number) => `${value} astronomical units`}
       onChange={handleChange}
       valueLabelDisplay="off"
       disabled={!settingsStore.radiusEnabled}
       min={settingsStore.minRadius}
       max={settingsStore.maxRadius}
       valueLabelFormat={(value: number) => `${value} AU`}
-      onMouseDown={startDragging}
+      onPointerDown={startDragging}
       onChangeCommitted={stopDragging}
     />
   );
@@ -113,6 +125,11 @@ const StyledSlider = styled(SliderUnstyled)`
       outline: 0;
       border: 2px solid ${Colors.radiusSliderThumbColor};
       background-color: ${Colors.radiusSliderThumbColor};
+
+      :focus-visible {
+        outline: 3px solid #ffffff;
+        outline-offset: 3px;
+      }
 
       :hover {
         box-shadow: 0 0 0 0.25rem ${alpha(Colors.radiusSliderThumbColor, 0.15)};
@@ -186,7 +203,7 @@ const StyledSlider = styled(SliderUnstyled)`
 const RadiusSliderWrapper = styled.div`
   ${({ theme: { Colors } }) => css`
     width: 100%;
-    height: 84px;
+    min-height: 84px;
     background-color: ${Colors.radiusSliderBackgroundColor};
     padding: 10px 20px;
     flex: 1;
@@ -194,8 +211,16 @@ const RadiusSliderWrapper = styled.div`
 `;
 
 const StyledSliderWrapper = styled.div`
-  width: 91px;
-  margin: 0 16px;
+  ${({ theme: { Colors } }) => css`
+    width: min(180px, 34vw);
+    margin: 0 16px;
+    border-radius: 4px;
+
+    :focus-within {
+      outline: 3px solid ${Colors.radiusSliderThumbColor};
+      outline-offset: 4px;
+    }
+  `}
 `;
 
 const Label = styled.button<{ disabled?: boolean }>`
@@ -205,10 +230,17 @@ const Label = styled.button<{ disabled?: boolean }>`
       : Colors.radiusSliderLabelColor};
     font-size: 18px;
     margin: 0;
-    padding: 0;
+    padding: 8px;
+    min-width: 44px;
+    min-height: 44px;
     border: none;
     background: transparent;
     cursor: ${disabled ? 'not-allowed' : 'pointer'};
+
+    :focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 2px;
+    }
   `}
 `;
 
@@ -223,6 +255,5 @@ const Title = styled.div`
 const SliderWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 10px;
-  margin-left: 26px;
+  margin-top: 2px;
 `;

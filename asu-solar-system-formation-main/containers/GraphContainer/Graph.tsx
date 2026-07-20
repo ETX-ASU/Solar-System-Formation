@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Line, CustomLayerProps, CustomLayer } from '@nivo/line';
+import { ResponsiveLine, CustomLayerProps, CustomLayer } from '@nivo/line';
+import styled from 'styled-components';
 // @ts-expect-error
 import { Theme, patternDotsDef } from '@nivo/core';
 import { useTheme } from 'styled-components';
@@ -18,10 +19,11 @@ import {
   MIN_OBJECT_RADIUS,
   START_FROST_LINE_RADIUS,
 } from 'utils/consts';
-import { MODES } from 'domainTypes';
-import { condensationValues } from 'utils/objectsMap';
+import { MODES, TestObjectId } from 'domainTypes';
+import { condensationValues, OBJECT_NAMES } from 'utils/objectsMap';
 
 const DOTS_PATTERN_ID = 'dots-pattern';
+const GRAPH_MIN_TEMPERATURE = 20;
 
 export const Graph = observer(() => {
   const { graphStore, settingsStore } = useStores();
@@ -31,6 +33,8 @@ export const Graph = observer(() => {
     y: item.temperature,
     key: item.key,
     shortLabel: item.shortLabel,
+    objectName:
+      OBJECT_NAMES[item.key as TestObjectId] || item.shortLabel || item.key,
   }));
 
   const edgePoints = useMemo<[number, number][]>(
@@ -126,6 +130,15 @@ export const Graph = observer(() => {
   );
 
   const graphHeight = settingsStore.graphClearButtonVisible ? 410 : 457;
+  const pointSummary =
+    data.length > 0
+      ? `Plotted points: ${data
+          .map(
+            (point) =>
+              `${point.objectName}, ${point.x} astronomical units, ${point.y} kelvin`,
+          )
+          .join('; ')}.`
+      : 'No points are currently plotted.';
   const enablePoints =
     settingsStore.mode === MODES.SOLAR_SYSTEM ||
     settingsStore.mode === MODES.FROST_LINE
@@ -135,73 +148,153 @@ export const Graph = observer(() => {
       : true;
 
   return (
-    <Line
-      width={440}
-      height={graphHeight}
-      margin={{ top: 20, right: 20, bottom: 80, left: 90 }}
-      theme={theme}
-      animate={false}
-      isInteractive={false}
-      enableSlices={false}
-      data={[
-        {
-          id: 'points',
-          data: data,
-        },
-      ]}
-      gridYValues={[16, 20, 50, 100, 500, 1000, 2000]}
-      gridXValues={[0.125, 0.5, 1, 2, 5, 10, 20, 32]}
-      xScale={{
-        type: 'log',
-        base: 2,
-        min: MIN_OBJECT_RADIUS,
-        max: MAX_RADIUS_IN_AU,
-      }}
-      axisBottom={{
-        legend: 'Distance from the Sun (AU)',
-        legendPosition: 'middle' as const,
-        legendOffset: 50,
-        tickValues: [0.5, 1, 2, 5, 10, 20, 32],
-      }}
-      yScale={{
-        type: 'log',
-        base: 2,
-        min: 20,
-        max: 2000,
-      }}
-      axisLeft={{
-        tickValues: [20, 50, 100, 500, 1000, 2000],
-        legend: 'Temperature (K)',
-        legendPosition: 'middle' as const,
-        legendOffset: -70,
-      }}
-      useMesh={true}
-      layers={[
-        'grid',
-        'axes',
-        graphStore.temperatureAreaVisible
-          ? TemperatureAreaLayer
-          : (noop as CustomLayer),
-        graphStore.frostLineAreaVisible
-          ? FrostLineAreaLayer
-          : (noop as CustomLayer),
-        graphStore.trendLineVisible ? TrendLayer : (noop as CustomLayer),
-        'points',
-      ]}
-      pointSymbol={GraphPoint}
-      defs={[
-        patternDotsDef(DOTS_PATTERN_ID, {
-          size: 5,
-          padding: 10,
-          stagger: false,
-          background: 'transparent',
-          color: Colors.graphFrostLineAreaColor,
-        }),
-      ]}
-      enablePoints={enablePoints}
-    />
+    <GraphFigure
+      aria-labelledby="graph-title"
+      aria-describedby="graph-summary graph-regions"
+      tabIndex={0}
+    >
+      <ChartWrapper style={{ height: graphHeight }} aria-hidden="true">
+        <ResponsiveLine
+          margin={{ top: 20, right: 20, bottom: 80, left: 90 }}
+          theme={theme}
+          animate={false}
+          isInteractive={false}
+          enableSlices={false}
+          data={[
+            {
+              id: 'points',
+              data: data,
+            },
+          ]}
+          gridYValues={[16, 20, 50, 100, 500, 1000, 2000]}
+          gridXValues={[0.125, 0.5, 1, 2, 5, 10, 20, 32]}
+          xScale={{
+            type: 'log',
+            base: 2,
+            min: MIN_OBJECT_RADIUS,
+            max: MAX_RADIUS_IN_AU,
+          }}
+          axisBottom={{
+            legend: 'Distance from the Sun (AU)',
+            legendPosition: 'middle' as const,
+            legendOffset: 50,
+            tickValues: [0.5, 1, 2, 5, 10, 20, 32],
+          }}
+          yScale={{
+            type: 'log',
+            base: 2,
+            min: GRAPH_MIN_TEMPERATURE,
+            max: 2000,
+          }}
+          axisLeft={{
+            tickValues: [20, 50, 100, 500, 1000, 2000],
+            legend: 'Temperature (K)',
+            legendPosition: 'middle' as const,
+            legendOffset: -70,
+          }}
+          useMesh={true}
+          layers={[
+            'grid',
+            'axes',
+            graphStore.temperatureAreaVisible
+              ? TemperatureAreaLayer
+              : (noop as CustomLayer),
+            graphStore.frostLineAreaVisible
+              ? FrostLineAreaLayer
+              : (noop as CustomLayer),
+            graphStore.trendLineVisible ? TrendLayer : (noop as CustomLayer),
+            'points',
+          ]}
+          pointSymbol={GraphPoint}
+          defs={[
+            patternDotsDef(DOTS_PATTERN_ID, {
+              size: 5,
+              padding: 10,
+              stagger: false,
+              background: 'transparent',
+              color: Colors.graphFrostLineAreaColor,
+            }),
+          ]}
+          enablePoints={enablePoints}
+        />
+      </ChartWrapper>
+      <div className="sr-only">
+        <p
+          id="graph-summary"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          This graph covers distances from {MIN_OBJECT_RADIUS} to{' '}
+          {MAX_RADIUS_IN_AU} astronomical units and temperatures from{' '}
+          {GRAPH_MIN_TEMPERATURE} to 2000 kelvin. Temperature decreases as
+          distance from the Sun increases. {pointSummary}
+        </p>
+        <div id="graph-regions">
+          {graphStore.temperatureAreaVisible ? (
+            <p>
+              The yellow shaded rocks and metals region extends from{' '}
+              {condensationValues.rock} to {settingsStore.maxRadius}{' '}
+              astronomical units, from {GRAPH_MIN_TEMPERATURE} kelvin up to
+              the temperature curve.
+            </p>
+          ) : null}
+          {graphStore.frostLineAreaVisible ? (
+            <p>
+              The blue dotted hydrogen compounds region extends from{' '}
+              {START_FROST_LINE_RADIUS} to {settingsStore.maxRadius}{' '}
+              astronomical units, from {GRAPH_MIN_TEMPERATURE} kelvin up to
+              the temperature curve.
+            </p>
+          ) : null}
+          {!graphStore.temperatureAreaVisible &&
+          !graphStore.frostLineAreaVisible ? (
+            <p>No shaded or dotted condensation regions are currently visible.</p>
+          ) : null}
+        </div>
+        {data.length > 0 ? (
+          <table>
+            <caption>Plotted temperature and distance data</caption>
+            <thead>
+              <tr>
+                <th scope="col">Object</th>
+                <th scope="col">Distance in AU</th>
+                <th scope="col">Temperature in kelvin</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((point) => (
+                <tr key={`${point.key}-${point.x}-${point.y}`}>
+                  <th scope="row">{point.objectName}</th>
+                  <td>{point.x}</td>
+                  <td>{point.y}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : null}
+      </div>
+    </GraphFigure>
   );
 });
+
+const GraphFigure = styled.figure`
+  ${({ theme: { Colors } }) => `
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+
+    :focus-visible {
+      outline: 3px solid ${Colors.graphFrostLineAreaColor};
+      outline-offset: -5px;
+    }
+  `}
+`;
+
+const ChartWrapper = styled.div`
+  width: 100%;
+  min-width: 0;
+`;
 
 interface IAreaLayerFactoryOptions {
   id: string;

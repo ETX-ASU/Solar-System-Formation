@@ -20,6 +20,7 @@ export const ClearGraphButton = observer(() => {
   return settingsStore.graphClearButtonVisible ? (
     <ClearGraphButtonWrapper>
       <StyledButton
+        type="button"
         disabled={!settingsStore.graphClearButtonEnabled}
         onClick={handleOpen}
       >
@@ -68,6 +69,12 @@ const StyledButton = styled.button`
     background-color: transparent;
     border: none;
     cursor: pointer;
+    min-height: 44px;
+
+    :focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 3px;
+    }
 
     :disabled {
       cursor: default;

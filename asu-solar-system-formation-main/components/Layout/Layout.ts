@@ -1,41 +1,59 @@
 import styled, { css } from 'styled-components';
 
-export const Layout = styled.div`
-  ${({ theme: { Colors, Consts } }) => css`
-    display: flex;
-    width: ${Consts.appMinWidth};
-    height: ${Consts.appMinHeight};
-    min-width: ${Consts.appMinWidth};
+export const Layout = styled.main<{
+  $hasObjectBank: boolean;
+  $hasGraph: boolean;
+}>`
+  ${({ $hasObjectBank, $hasGraph, theme: { Colors, Consts } }) => css`
+    display: grid;
+    grid-template-columns: ${$hasObjectBank ? '138px ' : ''}minmax(360px, 1fr)
+      ${$hasGraph ? 'minmax(360px, 446px)' : ''};
+    width: 100%;
     min-height: ${Consts.appMinHeight};
     background-color: ${Colors.appBackgroundColor};
+
+    @media (max-width: 900px) {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: 100vh;
+    }
   `}
 `;
 
-export const LayoutTestObjects = styled.div`
+export const LayoutTestObjects = styled.aside`
   ${({ theme: { Colors } }) => css`
-    width: 138px;
     border-right: 1px solid ${Colors.defaultBorderColor};
+
+    @media (max-width: 900px) {
+      border-right: 0;
+      border-bottom: 1px solid ${Colors.defaultBorderColor};
+    }
   `}
 `;
 
-export const LayoutTestObjectParameters = styled.div`
+export const LayoutTestObjectParameters = styled.section`
   ${({ theme: { Colors } }) => css`
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    min-width: 0;
     border-right: 1px solid ${Colors.defaultBorderColor};
+
+    @media (max-width: 900px) {
+      border-right: 0;
+      border-bottom: 1px solid ${Colors.defaultBorderColor};
+    }
   `}
 `;
 
-export const LayoutGraph = styled.div`
-  flex-basis: 446px;
+export const LayoutGraph = styled.section`
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 `;
 
-export const LayoutSectionTitle = styled.div`
+export const LayoutSectionTitle = styled.h2`
   ${({ theme: { Colors, Consts } }) => css`
+    margin: 0;
     font-size: ${Consts.typographyTitleFontSize};
     font-weight: bold;
     text-align: center;

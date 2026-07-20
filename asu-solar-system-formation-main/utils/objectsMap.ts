@@ -1,6 +1,25 @@
 import { ITestObjectSource, MODES, TestObjectId } from 'domainTypes';
 import { BASE_PATH } from './consts';
 
+export const OBJECT_NAMES: Record<TestObjectId, string> = {
+  probe: 'Probe',
+  gas: 'Hydrogen and helium gas',
+  compound: 'Hydrogen compounds',
+  rock: 'Rocks and metals',
+  frost: 'Frost line',
+  planet1: 'Planet 1',
+  planet2: 'Planet 2',
+  planet3: 'Planet 3',
+  mercury: 'Mercury',
+  venus: 'Venus',
+  earth: 'Earth',
+  mars: 'Mars',
+  jupiter: 'Jupiter',
+  saturn: 'Saturn',
+  uranus: 'Uranus',
+  neptune: 'Neptune',
+};
+
 export const OBJECTS_BY_MODE: Record<MODES, ITestObjectSource[]> = {
   [MODES.PROBE]: [
     {

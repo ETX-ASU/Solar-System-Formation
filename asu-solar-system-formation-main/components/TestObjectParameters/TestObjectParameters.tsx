@@ -65,11 +65,13 @@ export const TestObjectParameters = observer(() => {
   ) : null;
 });
 
-const TestObjectParametersWrapper = styled.div`
+const TestObjectParametersWrapper = styled.dl`
   ${({ theme: { Colors } }) => css`
     display: flex;
+    flex-wrap: wrap;
     background-color: ${Colors.testObjectParametersBackgroundColor};
     padding: 10px 20px;
+    margin: 0;
   `}
 `;
 
@@ -77,7 +79,7 @@ const Field = styled.div`
   ${({ theme: { Colors } }) => css`
     display: flex;
     flex-direction: column;
-    width: 33%;
+    flex: 1 1 120px;
     color: ${Colors.testObjectParametersTextColor};
     font-size: 16px;
     line-height: 22px;
@@ -89,7 +91,7 @@ const Field = styled.div`
   `}
 `;
 
-const Label = styled.div`
+const Label = styled.dt`
   font-weight: bold;
   margin-bottom: 8px;
 `;
@@ -99,10 +101,14 @@ const Value: FunctionComponent<{ unit?: string }> = ({
   unit,
   ...rest
 }) => (
-  <div {...rest}>
+  <ValueElement {...rest}>
     {children || '--'} {unit}
-  </div>
+  </ValueElement>
 );
+
+const ValueElement = styled.dd`
+  margin: 0;
+`;
 
 const CondensedValueWrapper = styled.div`
   display: flex;

@@ -11,8 +11,8 @@ export const GraphContainer = observer(() => {
   const { settingsStore } = useStores();
 
   return settingsStore.graphVisible ? (
-    <LayoutGraph>
-      <LayoutSectionTitle>Temperature vs. Distance</LayoutSectionTitle>
+    <LayoutGraph aria-labelledby="graph-title">
+      <LayoutSectionTitle id="graph-title">Temperature vs. Distance</LayoutSectionTitle>
       <Graph />
       <ClearGraphButton />
     </LayoutGraph>

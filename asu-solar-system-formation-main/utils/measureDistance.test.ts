@@ -2,7 +2,7 @@ import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
   MAX_RADIUS_IN_PIXELS_REFERENCE,
-} from 'components/SolarSystemVisualization/consts';
+} from './consts';
 import {
   IPoint,
   IAstronomicalDistanceOptions,

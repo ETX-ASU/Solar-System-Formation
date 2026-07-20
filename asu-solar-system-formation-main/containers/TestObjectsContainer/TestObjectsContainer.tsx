@@ -14,24 +14,34 @@ export const TestObjectsContainer = observer(() => {
   const { testObjectsStore, settingsStore } = useStores();
 
   return settingsStore.bankVisible ? (
-    <LayoutTestObjects>
-      <LayoutSectionTitle>Test Objects</LayoutSectionTitle>
-      <TestObjectsList>
+    <LayoutTestObjects aria-labelledby="test-objects-title">
+      <LayoutSectionTitle id="test-objects-title">Test Objects</LayoutSectionTitle>
+      <TestObjectsList role="list" aria-label="Objects available to place">
         {testObjectsStore.visibleInBankObjects.map((object: ITestObject) => (
-          <TestObjectButton
-            key={object.id}
-            item={object}
-            disabled={!settingsStore.bankEnabled}
-          />
+          <li key={object.id}>
+            <TestObjectButton
+              item={object}
+              disabled={!settingsStore.bankEnabled}
+            />
+          </li>
         ))}
       </TestObjectsList>
     </LayoutTestObjects>
   ) : null;
 });
 
-const TestObjectsList = styled.div`
+const TestObjectsList = styled.ul`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 48px;
+  gap: 10px;
+  padding: 10px;
+  margin: 0;
+  list-style: none;
+
+  @media (max-width: 900px) {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 `;

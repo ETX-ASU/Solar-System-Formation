@@ -5,6 +5,7 @@ body {
   font-family: Open Sans, -apple-system, sans-serif;
   background-color: #fafafa;
   font-size: 14px;
+  min-width: 320px;
 }
 
 a {
@@ -14,4 +15,49 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 2000;
+  padding: 10px 14px;
+  color: #092133;
+  background: #ffffff;
+  border: 3px solid #ffc844;
+  border-radius: 3px;
+  transform: translateY(-150%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

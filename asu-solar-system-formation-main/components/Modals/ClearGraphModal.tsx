@@ -18,9 +18,9 @@ export const ClearGraphModal: VoidFunctionComponent<IClearGraphModalProps> = ({
 }) => {
   return (
     <StyledModal open={open} onClose={onClose} BackdropComponent={Backdrop}>
-      <Wrapper>
-        <Title>Are you sure?</Title>
-        <Content>
+      <Wrapper role="dialog" aria-modal="true" aria-labelledby="clear-title" aria-describedby="clear-description">
+        <Title id="clear-title">Clear the graph?</Title>
+        <Content id="clear-description">
           Clearing the graph removes all data from graph. You cannot undo this
           action.
         </Content>
@@ -58,7 +58,7 @@ const Backdrop = styled.div`
 
 const Wrapper = styled.div`
   ${({ theme: { Colors } }) => css`
-    width: 364px;
+    width: min(364px, calc(100vw - 32px));
     background-color: ${Colors.modalBackgroundColor};
     color: ${Colors.modalTextColor};
     border-radius: 3px;
@@ -83,7 +83,7 @@ const Actions = styled.div`
   `}
 `;
 
-const Title = styled.div`
+const Title = styled.h2`
   ${({ theme: { Colors } }) => css`
     font-size: 16px;
     font-weight: bold;

@@ -18,9 +18,12 @@ export const TestObjectParametersContainer = observer(() => {
   const { settingsStore } = useStores();
 
   return (
-    <LayoutTestObjectParameters>
+    <LayoutTestObjectParameters
+      id="simulation-area"
+      aria-label="Test object parameters and interactive solar system"
+    >
       {settingsStore.parametersVisible ? (
-        <LayoutSectionTitle>Test Object Parameters</LayoutSectionTitle>
+        <LayoutSectionTitle id="parameters-title">Test Object Parameters</LayoutSectionTitle>
       ) : null}
       <TestObjectParameters />
       <Content>
@@ -39,6 +42,8 @@ export const TestObjectParametersContainer = observer(() => {
 const Content = styled.div`
   ${({ theme: { Colors } }) => css`
     flex-grow: 1;
+    min-height: clamp(360px, 58vh, 620px);
+    position: relative;
     background-color: ${Colors.testObjectParametersBackgroundColor};
     background: url(${BASE_PATH}/assets/background-starfield.jpg);
   `}
@@ -50,7 +55,16 @@ const Actions = styled.div<{ isVisibleRadiusSlider: boolean }>`
     justify-content: ${isVisibleRadiusSlider ? 'space-between' : 'flex-end'};
     border-top: 1px solid ${Colors.defaultBorderColor};
 
-    * + * {
+    @media (max-width: 520px) {
+      flex-direction: column;
+
+      > * + * {
+        border-left: 0;
+        border-top: 1px solid ${Colors.defaultBorderColor};
+      }
+    }
+
+    > * + * {
       border-left: 1px solid ${Colors.defaultBorderColor};
     }
   `}

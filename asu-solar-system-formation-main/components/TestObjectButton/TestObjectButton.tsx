@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import { ITestObject } from 'domainTypes';
 import { observer } from 'mobx-react-lite';
 import { useStores } from 'providers/StoreProvider/useStores';
+import { OBJECT_NAMES } from 'utils/objectsMap';
 
 export interface ITestObjectButtonProps {
   item: ITestObject;
@@ -26,8 +27,13 @@ export const TestObjectButton = observer(
         isSelected={item.isSelected}
         disabled={disabled}
         onClick={handleClick}
+        aria-pressed={item.isSelected}
+        aria-label={`${OBJECT_NAMES[item.id]}, ${
+          item.isSelected ? 'selected' : 'not selected'
+        }`}
+        title={OBJECT_NAMES[item.id]}
       >
-        <img src={item.imgPath} alt={item.id} />
+        <img src={item.imgPath} alt="" aria-hidden="true" />
         {item.shortLabel ? <ShortLabel>{item.shortLabel}</ShortLabel> : null}
       </TestObjectButtonWrapper>
     );
@@ -40,8 +46,8 @@ const TestObjectButtonWrapper = styled.button<{ isSelected: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     background-color: ${isSelected
       ? Colors.testObjectSelectedBackgroundColor
       : Colors.testObjectBackgroundColor};
@@ -52,6 +58,11 @@ const TestObjectButtonWrapper = styled.button<{ isSelected: boolean }>`
         : Colors.testObjectBorderColor};
     cursor: pointer;
     transition: border 0.25s, background-color 0.25s;
+
+    :focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 3px;
+    }
 
     :disabled {
       cursor: not-allowed;
@@ -70,9 +81,6 @@ const TestObjectButtonWrapper = styled.button<{ isSelected: boolean }>`
       height: 32px;
     }
 
-    & + & {
-      margin-top: 10px;
-    }
   `}
 `;
 

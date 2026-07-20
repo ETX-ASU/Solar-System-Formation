@@ -11,6 +11,12 @@ export const SecondaryButton = styled.button`
     border: 1px solid ${Colors.primaryButtonBackgroundColor};
     border-radius: 3px;
     cursor: pointer;
+    min-height: 44px;
+
+    :focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 3px;
+    }
 
     :active {
       background-color: ${Colors.primaryButtonActiveBackgroundColor};

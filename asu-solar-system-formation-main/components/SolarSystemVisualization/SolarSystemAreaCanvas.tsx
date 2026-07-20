@@ -9,6 +9,7 @@ import { useStores } from 'providers/StoreProvider/useStores';
 import { useCanvas } from 'hooks/useCanvas';
 import { ITestObject, MODEL_ELEMENTS_VISIBLE } from 'domainTypes';
 import {
+  getCoordinatesForDistance,
   measureAstronomicalDistance,
   measureDistance,
   radiansToDegreesInCircle,
@@ -18,7 +19,11 @@ import { canvasObjectTools, drawDonut, getSunDiameter } from 'utils/canvas';
 
 import { StyledCanvas } from './elements';
 import { alpha } from '@material-ui/system';
-import { condensationValues, IMG_BY_OBJECT_ID } from 'utils/objectsMap';
+import {
+  condensationValues,
+  IMG_BY_OBJECT_ID,
+  OBJECT_NAMES,
+} from 'utils/objectsMap';
 import { imageCache } from 'utils/imageCache';
 
 export const SolarSystemAreaCanvas = observer(() => {
@@ -34,16 +39,9 @@ export const SolarSystemAreaCanvas = observer(() => {
     });
   }, []);
 
-  const updateObjectPosition = useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const updateObjectAtPoint = useCallback(
+    (point: { x: number; y: number }) => {
       const canvas = clickableCanvasRef.current!;
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const point = {
-        x,
-        y,
-      };
       const sunCoordinates = {
         x: canvas.width / 2,
         y: canvas.height / 2,
@@ -118,6 +116,102 @@ export const SolarSystemAreaCanvas = observer(() => {
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [testObjectsStore, settingsStore, settingsStore.radius, clickableCanvasRef],
+  );
+
+  const updateObjectPosition = useCallback(
+    (event: React.PointerEvent<HTMLCanvasElement>) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const scaleX = event.currentTarget.width / rect.width;
+      const scaleY = event.currentTarget.height / rect.height;
+      updateObjectAtPoint({
+        x: (event.clientX - rect.left) * scaleX,
+        y: (event.clientY - rect.top) * scaleY,
+      });
+    },
+    [updateObjectAtPoint],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLCanvasElement>) => {
+      const selectedObject = testObjectsStore.selectedObject;
+      const canvas = clickableCanvasRef.current;
+      if (!selectedObject || !canvas) {
+        return;
+      }
+
+      const sunCoordinates = { x: canvas.width / 2, y: canvas.height / 2 };
+      const fixedDistance = selectedObject.meta?.distanceFromSun;
+
+      if (
+        !selectedObject.isPlaced &&
+        fixedDistance != null &&
+        (event.key === 'Enter' || event.key === ' ')
+      ) {
+        event.preventDefault();
+        const fixedDistanceInPixels =
+          (fixedDistance * settingsStore.maxRadiusInPixels) /
+          settingsStore.maxRadius;
+        const angle = selectedObject.meta?.angle ?? selectedObject.angle;
+
+        selectedObject.updatePosition({
+          distance: fixedDistance,
+          distanceInPixels: fixedDistanceInPixels,
+          coordinates: getCoordinatesForDistance(
+            fixedDistanceInPixels,
+            angle,
+            sunCoordinates,
+          ),
+          angle,
+        });
+        return;
+      }
+
+      const preferredInitialDistance =
+        ((fixedDistance || 1) * settingsStore.maxRadiusInPixels) /
+        settingsStore.maxRadius;
+      const initialDistance = Math.min(
+        settingsStore.maxRadiusInPixels,
+        Math.max(
+          preferredInitialDistance,
+          getSunDiameter(settingsStore.radius) / 2 + 8,
+        ),
+      );
+      const point = selectedObject.isPlaced
+        ? { ...selectedObject.coordinates }
+        : { x: sunCoordinates.x + initialDistance, y: sunCoordinates.y };
+      const step = event.shiftKey ? 25 : 8;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          point.x -= step;
+          break;
+        case 'ArrowRight':
+          point.x += step;
+          break;
+        case 'ArrowUp':
+          point.y -= step;
+          break;
+        case 'ArrowDown':
+          point.y += step;
+          break;
+        case 'Enter':
+        case ' ':
+          break;
+        default:
+          return;
+      }
+
+      event.preventDefault();
+      updateObjectAtPoint(point);
+    },
+    [
+      clickableCanvasRef,
+      settingsStore.maxRadius,
+      settingsStore.maxRadiusInPixels,
+      settingsStore.radius,
+      testObjectsStore,
+      updateObjectAtPoint,
+    ],
   );
 
   const { drawObject, drawObjectLabel, drawObjectOrbit } = useMemo(
@@ -349,12 +443,37 @@ export const SolarSystemAreaCanvas = observer(() => {
   ]);
 
   return (
-    <StyledCanvas
-      data-testid="solar-system-clickable-canvas"
-      ref={clickableCanvasRef}
-      width={settingsStore.solarSystemCanvasOptions.canvasBoundaries.width}
-      height={settingsStore.solarSystemCanvasOptions.canvasBoundaries.height}
-      onMouseDown={updateObjectPosition}
-    />
+    <>
+      <StyledCanvas
+        data-testid="solar-system-clickable-canvas"
+        ref={clickableCanvasRef}
+        width={settingsStore.solarSystemCanvasOptions.canvasBoundaries.width}
+        height={settingsStore.solarSystemCanvasOptions.canvasBoundaries.height}
+        onPointerDown={updateObjectPosition}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="application"
+        aria-roledescription="interactive solar system"
+        aria-keyshortcuts="Enter Space ArrowLeft ArrowRight ArrowUp ArrowDown"
+        aria-describedby="canvas-instructions canvas-status"
+        aria-label="Solar system placement space"
+      />
+      <div
+        id="canvas-status"
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+      >
+        {testObjectsStore.selectedObject
+          ? `${OBJECT_NAMES[testObjectsStore.selectedObject.id]} selected. ${
+              testObjectsStore.selectedObject.isPlaced
+                ? `Placed ${testObjectsStore.selectedObject.distance.toFixed(
+                    2,
+                  )} astronomical units from the sun.`
+                : 'Not yet placed.'
+            }`
+          : 'No object selected.'}
+      </div>
+    </>
   );
 });

@@ -123,6 +123,7 @@ export const SolarSystemEdgeCanvas = observer(() => {
 
   return (
     <StyledCanvas
+      aria-hidden="true"
       ref={edgeCanvasRef}
       width={settingsStore.solarSystemCanvasOptions.canvasBoundaries.width}
       height={settingsStore.solarSystemCanvasOptions.canvasBoundaries.height}

@@ -3,8 +3,8 @@
   "version": "0.1.6",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build && next export",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider next dev",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider next build && next export",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@material-ui/core": "^5.0.0-beta.4",
-    "@material-ui/styled-engine": "npm:@material-ui/styled-engine-sc@next",
-    "@material-ui/styled-engine-sc": "^5.0.0-beta.1",
+    "@emotion/react": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
     "@nivo/core": "^0.73.0",
     "@nivo/line": "^0.73.0",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
@@ -37,9 +37,6 @@
     "eslint-config-next": "11.1.0",
     "jest": "^27.0.6",
     "typescript": "4.3.5"
-  },
-  "resolutions": {
-    "@material-ui/styled-engine": "npm:@material-ui/styled-engine-sc@next"
   },
   "jest": {
     "moduleDirectories": [
